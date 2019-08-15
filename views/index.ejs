@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Perpustakaan</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <!-- Input Pinjaman -->
+    <div class="container">
+      <div class="my-5">
+        <h2>Input Peminjaman</h2>
+        <form action="#">
+          <div class="form-group">
+            <label for="nama">Nama</label>
+            <select class="form-control" id="student">
+              <% student.forEach(s => { %>
+              <option value="<%= s.id %>"><%= s.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="buku">Buku</label>
+            <select class="form-control" id="book">
+              <% book.forEach(b => { %>
+              <option value="<%= b.id %>"><%= b.title %></option>
+              <% }) %>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="pinjam" onclick="borrowBook()">
+            Pinjam
+          </button>
+          <button class="btn btn-primary" id="kembali" onclick="returnBook()">
+            Kembali
+          </button>
+        </form>
+      </div>
+      <!-- Borrowed -->
+      <div class="my-5">
+        <h2>Sedang Dipinjam</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Siswa</th>
+              <th>Judul</th>
+            </tr>
+          </thead>
+          <tbody id="borrow"></tbody>
+        </table>
+      </div>
+      <!-- Most Borrowed -->
+      <div class="my-5">
+        <h2>Buku Paling Sering Dipinjam</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Judul</th>
+              <th>Dipinjam</th>
+            </tr>
+          </thead>
+          <tbody id="most"></tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    function borrowBook() {
+      axios
+        .post("/", {
+          book: $("#book").val(),
+          student: $("#student").val()
+        })
+        .then(res => {
+          ready();
+        })
+        .catch(e => {
+          if (e.response.status == 400 && e.response.data.error == "full") {
+            alert("Siswa telah meminjam 3 buku");
+          } else {
+            alert("Something wrong!");
+          }
+        });
+    }
+
+    function returnBook() {
+      axios
+        .delete(`/?book=${$("#book").val()}&student=${$("#student").val()}`)
+        .then(res => {
+          ready();
+        })
+        .catch(e => {
+          if (e.response.status == 400 && e.response.data.error == "empty") {
+            alert("Siswa tidak sedang meminjam buku");
+          } else if (
+            e.response.status == 400 &&
+            e.response.data.error == "no"
+          ) {
+            alert("Siswa tidak meminjam buku tersebut");
+          } else {
+            alert("Something wrong!");
+          }
+        });
+    }
+
+    function ready() {
+      axios.get("/ready").then(res => {
+        const tableBorrow = [];
+        const tableMost = [];
+
+        res.data[0].forEach((b, i) => {
+          tableBorrow.push(
+            `<tr>
+              <td>${i + 1}</td>
+              <td>${b.name}</td>
+              <td>${b.title}</td>
+            </tr>`
+          );
+        });
+
+        res.data[1].forEach((m, i) => {
+          tableMost.push(
+            `<tr>
+              <td>${i + 1}</td>
+              <td>${m.title}</td>
+              <td>${m.borrowed}</td>
+            </tr>`
+          );
+        });
+
+        $("#borrow").html(tableBorrow.join(""));
+        $("#most").html(tableMost.join(""));
+      });
+    }
+
+    $(document).ready(() => {
+      ready();
+    });
+  </script>
+</html>
