@@ -107,7 +107,7 @@ app.delete("/", async (req, res) => {
     const deleteIt = await query(
       `DELETE FROM borrowed WHERE id_book = ${
         req.query.book
-      } AND id_student = ${req.query.student}`
+      } AND id_student = ${req.query.student} LIMIT 1`
     );
 
     if (deleteIt.affectedRows == 0) {
