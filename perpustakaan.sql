@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 15, 2019 at 10:09 PM
+-- Generation Time: Aug 15, 2019 at 10:59 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -40,16 +40,16 @@ CREATE TABLE `book` (
 --
 
 INSERT INTO `book` (`id`, `title`, `stock`, `borrowed`) VALUES
-(1, 'In Search of Lost Time', 10, 4),
+(1, 'In Search of Lost Time', 10, 5),
 (2, 'Don Quixote', 10, 1),
 (3, 'Ulysses', 10, 1),
-(4, 'The Great Gatsby', 10, 0),
+(4, 'The Great Gatsby', 10, 2),
 (5, 'Moby Dick', 10, 0),
 (6, 'Hamlet', 10, 0),
 (7, 'War and Peace', 10, 0),
 (8, 'The Odyssey', 10, 2),
 (9, 'One Hundred Years', 10, 0),
-(10, 'The Divine Comedy', 10, 0),
+(10, 'The Divine Comedy', 10, 3),
 (11, 'The Brothers Karamazov', 10, 1),
 (12, 'Madame Bovary', 10, 2);
 
@@ -77,7 +77,10 @@ INSERT INTO `borrowed` (`id`, `id_book`, `id_student`) VALUES
 (22, 1, 8),
 (23, 1, 7),
 (24, 12, 7),
-(25, 12, 11);
+(25, 12, 11),
+(30, 10, 6),
+(31, 1, 1),
+(32, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -145,7 +148,7 @@ ALTER TABLE `book`
 -- AUTO_INCREMENT for table `borrowed`
 --
 ALTER TABLE `borrowed`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `student`
